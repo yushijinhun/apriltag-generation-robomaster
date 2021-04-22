@@ -83,6 +83,22 @@ public class TagFamily
      * modified externally. **/
     public TagFamily(ImageLayout layout, int minimumHammingDistance, long codes[])
     {
+        int computedMinHammingDistance = Integer.MAX_VALUE;
+        for (int i = 0; i < codes.length; i++) {
+            for (int j = i + 1; j < codes.length; j++) {
+                int d = hammingDistance(codes[i], codes[j]);
+                if (computedMinHammingDistance > d) {
+                    computedMinHammingDistance = d;
+                }
+            }
+        }
+        if (minimumHammingDistance == -1) {
+            System.err.println("Minimum hamming distance: computed " + computedMinHammingDistance);
+            minimumHammingDistance = computedMinHammingDistance;
+        } else {
+            System.err.println("Minimum hamming distance: given " + minimumHammingDistance + ", computed " + computedMinHammingDistance);
+        }
+
         this.layout = layout;
 
         this.minimumHammingDistance = minimumHammingDistance;
@@ -107,13 +123,13 @@ public class TagFamily
     }
 
     /** Compute the hamming distance between two longs. **/
-    /*public static final int hammingDistance(long a, long b)
+    public static final int hammingDistance(long a, long b)
     {
         return popCount(a^b);
-    }*/
+    }
 
     /** How many bits are set in the long? **/
-    /*static final int popCountReal(long w)
+    static final int popCountReal(long w)
     {
         int cnt = 0;
         while (w != 0) {
@@ -121,17 +137,15 @@ public class TagFamily
             cnt++;
         }
         return cnt;
-    }*/
+    }
 
-    /*
     static final int popCountTableShift = 12;
     static final byte[] popCountTable = new byte[1<<popCountTableShift];
     static {
         for (int i = 0; i < popCountTable.length; i++)
             popCountTable[i] = (byte) popCountReal(i);
-    }*/
+    }
 
-    /*
     public static final int popCount(long w)
     {
         int count = 0;
@@ -141,7 +155,7 @@ public class TagFamily
             w >>= popCountTableShift;
         }
         return count;
-    }*/
+    }
 
     public long[] getCodes() {
         return codes;
